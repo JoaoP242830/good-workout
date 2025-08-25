@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Good Workout - Login</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial', sans-serif; }
+    body {
+      background: linear-gradient(135deg, #000000, #1a1a1a, #262c2c);
+      display: flex; justify-content: center; align-items: center;
+      min-height: 100vh;
+    }
+    .main-container {
+      width: 400px;
+      background: #262c2c;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+      text-align: center;
+      color: white;
+      animation: fadeIn 0.8s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h1 { color: #f48200; margin-bottom: 10px; }
+    h2 { margin-bottom: 20px; }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 15px;
+    }
+    .input-group i {
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      transform: translateY(-50%);
+      color: #555;
+      font-size: 1rem;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 12px 40px 12px 40px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      background: rgba(255,255,255,0.9);
+      outline: none;
+      transition: all 0.3s;
+    }
+    .input-group input:focus {
+      border: 2px solid #f48200;
+    }
+    /* Botão para ver senha */
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #555;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #f48200;
+      color: white;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #d66e00;
+      transform: scale(1.02);
+    }
+    .toggle-form { margin-top: 15px; }
+    .toggle-form a {
+      color: #4285f4;
+      text-decoration: none;
+    }
+    .toggle-form a:hover { text-decoration: underline; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="main-container">
+    <h1>Good Workout</h1>
+
+    <!-- Login -->
+    <div id="loginForm">
+      <h2>Login</h2>
+      <form id="login-form">
+        <div class="input-group">
+          <i class="fa-solid fa-envelope"></i>
+          <input type="email" name="email" id="loginEmail" placeholder="Digite seu e-mail" required>
+        </div>
+        <div class="input-group">
+          <i class="fa-solid fa-lock"></i>
+          <input type="password" name="senha" id="loginPassword" placeholder="Digite sua senha" required>
+          <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('loginPassword', this)"></i>
+        </div>
+        <button type="submit">Entrar</button>
+      </form>
+      <div class="toggle-form">
+        <p><a href="#" onclick="toggleForms('register')">Cadastre-se</a> | 
+           <a href="#" onclick="toggleForms('recover')">Esqueceu a senha?</a></p>
+      </div>
+    </div>
+
+    <!-- Cadastro -->
+    <div id="registerForm" class="hidden">
+      <h2>Cadastro</h2>
+      <form id="register-form" method="POST" action="/cadastrar">
+        <div class="input-group">
+          <i class="fa-solid fa-user"></i>
+          <input type="text" name="nome" id="registerName" placeholder="Seu nome" required>
+        </div>
+        <div class="input-group">
+          <i class="fa-solid fa-envelope"></i>
+          <input type="email" name="email" id="registerEmail" placeholder="Digite seu e-mail" required>
+        </div>
+        <div class="input-group">
+          <i class="fa-solid fa-lock"></i>
+          <input type="password" name="senha" id="registerPassword" placeholder="Crie uma senha" required>
+          <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('registerPassword', this)"></i>
+        </div>
+        <div class="input-group">
+          <i class="fa-solid fa-lock"></i>
+          <input type="password" name="confirmar_senha" id="registerConfirmPassword" placeholder="Confirme sua senha" required>
+          <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('registerConfirmPassword', this)"></i>
+        </div>
+        <button type="submit">Cadastrar</button>
+      </form>
+      <div class="toggle-form">
+        <p>Já tem uma conta? <a href="#" onclick="toggleForms('login')">Faça login</a></p>
+      </div>
+    </div>
+
+    <!-- Recuperar senha -->
+    <div id="recoverForm" class="hidden">
+      <h2>Recuperar Senha</h2>
+      <form id="recover-form">
+        <div class="input-group">
+          <i class="fa-solid fa-envelope"></i>
+          <input type="email" id="recoverEmail" placeholder="Digite seu e-mail" required>
+        </div>
+        <div class="input-group">
+          <i class="fa-solid fa-lock"></i>
+          <input type="password" id="newPassword" placeholder="Nova senha" required>
+          <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('newPassword', this)"></i>
+        </div>
+        <button type="submit">Redefinir Senha</button>
+      </form >
+      <div class="toggle-form">
+        <p><a href="#" onclick="toggleForms('login')">Voltar ao Login</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Alternar formulários
+    function toggleForms(form) {
+      document.getElementById("loginForm").classList.add("hidden");
+      document.getElementById("registerForm").classList.add("hidden");
+      document.getElementById("recoverForm").classList.add("hidden");
+      document.getElementById(form + "Form").classList.remove("hidden");
+    }
+
+    // Mostrar/ocultar senha
+    function togglePassword(id, el) {
+      const input = document.getElementById(id);
+      if (input.type === "password") {
+        input.type = "text";
+        el.classList.replace("fa-eye", "fa-eye-slash");
+      } else {
+        input.type = "password";
+        el.classList.replace("fa-eye-slash", "fa-eye");
+      }
+    }
+
+    // Login via Flask
+    document.addEventListener('DOMContentLoaded', function() {
+      const loginForm = document.getElementById('login-form');
+      const registerForm = document.getElementById('register-form');
+
+      // Login
+      loginForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = new FormData(loginForm);
+
+        try {
+          const response = await fetch('/login', {
+            method: 'POST',
+            body: formData
+          });
+          const result = await response.json();
+          if (result.success) {
+            window.location.href = result.redirect;
+          } else {
+            alert(result.message);
+          }
+        } catch (err) {
+          alert('Erro de conexão. Tente novamente.');
+          console.error(err);
+        }
+      });
+
+      // Cadastro
+      registerForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = new FormData(registerForm);
+
+        try {
+          const response = await fetch('/cadastrar', {
+            method: 'POST',
+            body: formData
+          });
+          const result = await response.json();
+          if (result.success) {
+            window.location.href = result.redirect;
+          } else {
+            alert(result.message);
+          }
+        } catch (err) {
+          alert('Erro de conexão. Tente novamente.');
+          console.error(err);
+        }
+      });
+
+      // Recuperar senha (aqui você precisaria implementar o endpoint no Flask)
+      const recoverForm = document.getElementById('recover-form');
+      recoverForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        alert("Função de recuperação de senha ainda não implementada no servidor.");
+      });
+    });
+  </script>
+</body>
+</html>

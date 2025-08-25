@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academia Fitness - Painel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #ddd;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: #282731;
+            color: white;
+            padding: 20px 0;
+            transition: all 0.3s;
+        }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(144, 144, 144, 0.1);
+        }
+
+        .sidebar-header h3 {
+            margin-bottom: 10px;
+            color: #f48200;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-category {
+            padding: 10px 20px;
+            color: #f48200;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .menu-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .menu-item:hover {
+            background-color: #34495e;
+        }
+
+        .menu-item.active {
+            background-color: #05314e;
+        }
+
+        .menu-item i {
+            margin-right: 10px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #000d1a;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .header h1 {
+            color: #ffffff;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        /* Cards */
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background-color: #1a0b00;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            padding: 15px;
+            background-color: #f48200;
+            color: white;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .card-body ul {
+            list-style: none;
+        }
+
+        .card-body li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .card-body li:last-child {
+            border-bottom: none;
+        }
+
+        /* Form styles */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            background-color: #f48200;
+            color: rgb(255, 255, 255);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #05314e;
+        }
+
+        /* Hidden sections */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* IMC indicator */
+        .imc-indicator {
+            height: 20px;
+            background: linear-gradient(to right, #2ecc71, #f1c40f, #e74c3c);
+            margin: 10px 0;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .imc-marker {
+            position: absolute;
+            top: -15px;
+            width: 2px;
+            height: 20px;
+            background-color: #333;
+        }
+
+        .imc-value {
+            position: absolute;
+            top: -30px;
+            transform: translateX(-50%);
+            font-size: 12px;
+        }
+
+        .user-pointer {
+            position: absolute;
+            top: -10px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 10px solid #ddd;
+            transform: translateX(-50%);
+        }
+        
+        /* Exercise Cards */
+        .exercise-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .exercise-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .exercise-card:hover .exercise-image {
+            transform: scale(1.05);
+        }
+
+        .exercise-info {
+            padding: 15px;
+        }
+
+        .exercise-title {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: #dbdbdb;
+        }
+
+        .exercise-category {
+            display: inline-block;
+            background-color: #f48200;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+
+        .exercise-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .exercise-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+
+        /* Exercise filters */
+        .exercise-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 15px;
+            background-color: #ecf0f1;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .site-btn {
+            margin: 10px;
+            padding: 10px;
+            background: #1a0b00;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .site-btn img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+
+        .site-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Estilo do modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+        }
+
+        .modal-content {
+            background: #282731;
+            margin: 10% auto;
+            padding: 20px;
+            width: 350px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 10px;
+        }
+
+        .modal-content button {
+            background: #f48200;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .close {
+            color: red;
+            float: right;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background-color: #05314e;
+            color: white;
+        }
+
+        /* Search container */
+        .search-container {
+            display: flex;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .search-container input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3>Good Workout</h3>
+                <p>Bem-vindo ao seu painel</p>
+            </div>
+            <div class="sidebar-menu">
+                <div class="menu-category">Menu Principal</div>
+                <div class="menu-item active" data-section="dashboard">
+                    <i>🏠</i> Home
+                </div>
+                
+                <div class="menu-category">Sua Academia</div>
+                <div class="menu-item" data-section="exercises">
+                    <i>💪</i> Exercícios
+                </div>
+                <div class="menu-item" data-section="community">
+                    <i>👥</i> Comunidade
+                </div>
+                
+                <div class="menu-category">Loja</div>
+                <div class="menu-item" data-section="equipment">
+                    <i>🏋️</i> Equipamentos
+                </div>
+                <div class="menu-item" data-section="supplements">
+                    <i>🥤</i> Suplementos
+                </div>
+                
+                <div class="menu-category">Perfil</div>
+                <div class="menu-item" data-section="profile">
+                    <i>👤</i> Meu Perfil
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1>Home</h1>
+                <div class="user-profile">
+                    <img src="https://via.placeholder.com/40" alt="User">
+                    <span>Olá, Usuário!</span>
+                </div>
+            </div>
+            
+            <!-- Dashboard Section -->
+            <div class="section active" id="dashboard">
+                <h2>Bem-vindo ao Academia Fitness</h2>
+                <p>Seu painel completo para treinos, acompanhamento e suplementos.</p>
+                
+                <div class="card-container">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Próximos Treinos</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul>
+                                <li>⚽ Futebol - Amanhã 15:00</li>
+                                <li>🏋️ Academia - Segunda 08:00</li>
+                                <li>🏀 Basquete - Quarta 18:00</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Seu Progresso</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>IMC atual: <span id="current-imc">22.5</span></p>
+                            <div class="imc-indicator">
+                                <div class="imc-marker" style="left: 16.5%"><span class="imc-value">18.5</span></div>
+                                <div class="imc-marker" style="left: 50%"><span class="imc-value">25</span></div>
+                                <div class="imc-marker" style="left: 83.5%"><span class="imc-value">30</span></div>
+                                <div class="user-pointer" id="user-imc-pointer" style="left: 45%"></div>
+                            </div>
+                            <p>Classificação: <span id="imc-class">Peso normal</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Dicas Rápidas</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul>
+                                <li>💧 Beba pelo menos 2L de água por dia</li>
+                                <li>⏰ Mantenha uma rotina regular de treinos</li>
+                                <li>🍎 Alimentação balanceada é essencial</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sports Section -->
+            <div class="section" id="sports">
+                <h2>Esportes</h2>
+                <p>Escolha seu esporte preferido e veja os treinos disponíveis.</p>
+                
+                <div class="card-container">
+                    <div class="card">
+                        <div class="card-header" style="background-color: #27ae60;">
+                            <h3>Futebol</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul>
+                                <li>⚽ Treino de dribles</li>
+                                <li>🎯 Finalização</li>
+                                <li>🦵 Fortalecimento de pernas</li>
+                                <li>🏃 Resistência física</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header" style="background-color: #e74c3c;">
+                            <h3>Basquete</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul>
+                                <li>🏀 Arremessos</li>
+                                <li>🤸 Movimentação</li>
+                                <li>🦵 Saltos verticais</li>
+                                <li>🤝 Passes precisos</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header" style="background-color: #05314e;">
+                            <h3>Vôlei</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul>
+                                <li>🏐 Saques</li>
+                                <li>✋ Manchetes</li>
+                                <li>🖐️ Toques</li>
+                                <li>🦵 Bloqueios</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Warmup Section -->
+            <div class="section" id="warmup">
+                <h2>Aquecimento</h2>
+                <p>Exercícios para preparar seu corpo antes dos treinos.</p>
+                
+                <div class="card-container">
+                    <div class="card">
+                        <div class="card-header" style="background-color: #9b59b6;">
+                            <h3>Academia</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul>
+                                <li>🏃‍♂️ 10min esteira/bike</li>
+                                <li>🔄 Rotação de braços</li>
+                                <li>🦵 Alongamento de pernas</li>
+                                <li>🤸 Mobilidade articular</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header" style="background-color: #f39c12;">
+                            <h3>Esportes</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul>
+                                <li>⚽ Corrida com mudança de direção</li>
+                                <li>🏀 Saltos dinâmicos</li>
+                                <li>🏐 Alongamento específico</li>
+                                <li>🤸 Exercícios coordenativos</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Exercises Section -->
+            <div class="section" id="exercises">
+                <h2>Pesquisa de Exercícios</h2>
+                <p>Encontre exercícios detalhados para cada grupo muscular.</p>
+                
+                <div class="search-container">
+                    <input type="text" id="exercise-search" placeholder="Pesquise">
+                    <button class="btn" id="search-btn">Buscar</button>
+                </div>
+                
+                <div class="exercise-filters">
+                    <button class="filter-btn active" data-category="all">Todos</button>
+                    <button class="filter-btn" data-category="peito">Peito</button>
+                    <button class="filter-btn" data-category="costas">Costas</button>
+                    <button class="filter-btn" data-category="pernas">Pernas</button>
+                    <button class="filter-btn" data-category="biceps">Bíceps</button>
+                    <button class="filter-btn" data-category="triceps">Tríceps</button>
+                    <button class="filter-btn" data-category="ombros">Ombros</button>
+                    <button class="filter-btn" data-category="abdomen">Abdômen</button>
+                    <button class="filter-btn" data-category="volei">Volei</button>
+                    <button class="filter-btn" data-category="basquete">Basquete</button>
+                    <button class="filter-btn" data-category="futebol">Futebol</button>
+                </div>
+                
+                <div id="exercise-results" class="card-container">
+                    <!-- Results will be displayed here -->
+                </div>
+            </div>
+            
+            <!-- Community Section -->
+            <div class="section" id="community">
+                <h2>Comunidade</h2>
+                <p>Conecte-se com outros alunos e compartilhe experiências.</p>
+                
+                <div class="card-container">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Grupos de Treino</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul>
+                                <li>👥 Grupo de musculação</li>
+                                <li>⚽ Time de futebol</li>
+                                <li>🏀 Equipe de basquete</li>
+                                <li>🧘 Grupo de alongamento</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Destaques da Semana</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul>
+                                <li>🏆 João aumentou 5kg no supino</li>
+                                <li>⏱️ Maria correu 5km em 22min</li>
+                                <li>💪 Carlos perdeu 3% de gordura</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Equipment Section -->
+            <div class="section" id="equipment">
+                <h2>Equipamentos</h2>
+                <p>Onde conseguir e comprar equipamentos de qualidade.</p>
+                
+                <h1>🏋️‍♂️ Sites Recomendados de Equipamentos Fitness</h1>
+            
+                <!-- Botões dos sites -->
+                <button class="site-btn" onclick="openModal('D1Fitness', 'Loja especializada em equipamentos de academia para uso profissional e residencial. Trabalha com halteres, anilhas, barras, esteiras, bicicletas ergométricas e acessórios variados.', 'https://d1fitness.com.br')">
+                    <img src="uploads/logod1.png" alt="D1Fitness">
+                </button>
+
+                <button class="site-btn" onclick="openModal('Natural Fitness', 'Focada em acessórios e equipamentos de musculação como cordas, elásticos, halteres, bolas de pilates e equipamentos leves.', 'https://naturalfitness.com.br/')">
+                    <img src="uploads/logonatu.png" alt="Natural Fitness">
+                </button>
+
+                <button class="site-btn" onclick="openModal('Kikos Fitness', 'Marca tradicional (35+ anos) no setor fitness, com esteiras, bicicletas, elípticos e aparelhos robustos para academias profissionais e uso residencial.', 'https://www.kikos.com.br/')">
+                    <img src="uploads/logokikos.png" alt="Kikos Fitness">
+                </button>
+
+                <button class="site-btn" onclick="openModal('Casa do Fitness', 'Loja especializada em musculação e cardio, com assistência técnica e suporte pós-venda.', 'https://www.casadofitness.com.br/')">
+                    <img src="uploads/logocasa.png" alt="Casa do Fitness">
+                </button>
+
+                <button class="site-btn" onclick="openModal('Rope Store', 'Voltada para cross-training e funcional: anilhas olímpicas, barras, rigs, kettlebells, cordas e acessórios de alta resistência.', 'https://ropestore.com.br/')">
+                    <img src="uploads/logorope.png" alt="Rope Store">
+                </button>
+
+                <button class="site-btn" onclick="openModal('MegaGym', 'Mais focada em halteres, kettlebells e kits de pesos acessíveis, ideal para quem está começando.', 'https://megagym.com.br/')">
+                    <img src="uploads/logomega.png" alt="MegaGym">
+                </button>
+
+                <button class="site-btn" onclick="openModal('Rei do Fitness', 'Fabrica e vende seus próprios equipamentos de musculação, funcional e cross-training, com preços competitivos.', 'https://www.reidofitness.com.br/')">
+                    <img src="uploads/logorei.png" alt="Rei do Fitness">
+                </button>
+
+                <button class="site-btn" onclick="openModal('Uplift Fitness', 'Loja moderna com halteres, barras, racks e acessórios de alta qualidade para casa e academias.', 'https://upliftfitness.com.br/')">
+                    <img src="uploads/logoup.png" alt="Uplift Fitness">
+                </button>
+            </div>
+            
+            <!-- Supplements Section -->
+            <div class="section" id="supplements">
+                <h2>Suplementos</h2>
+                <p>Onde comprar suplementos de qualidade online.</p>
+
+                <h1>💊 Sites Recomendados de Suplementos</h1>
+
+                <!-- Botões dos sites -->
+                <button class="site-btn" onclick="openModal('Growth Supplements', 'Loja online com grande variedade de suplementos e vitaminas, incluindo whey, creatina, aminoácidos e acessórios fitness.', 'https://www.growth.com.br')">
+                    <img src="uploads/logogrow.png" alt="Growth Supplements">
+                </button>
+
+                <button class="site-btn" onclick="openModal('Madrugão Suplementos', 'Oferece suplementos com foco em custo-benefício e entrega rápida para todo Brasil.', 'https://www.madrugaosuplementos.com.br')">
+                    <img src="uploads/logonadru.png" alt="Madrugão Suplementos">
+                </button>
+
+                <button class="site-btn" onclick="openModal('Corpo Ideal', 'Loja especializada em nutrição esportiva e produtos para ganho de massa e definição.', 'https://www.corpoideal.com.br')">
+                    <img src="uploads/logocorpo.png" alt="Corpo Ideal">
+                </button>
+
+                <button class="site-btn" onclick="openModal('Dux Nutrition', 'Suplementos de alta qualidade, incluindo whey, creatina, BCAA e pré-treinos.', 'https://www.duxnutrition.com.br')">
+                    <img src="uploads/logodux.png" alt="Dux Nutrition">
+                </button>
+
+                <button class="site-btn" onclick="openModal('Max Titanium', 'Marca brasileira renomada em suplementos, com linha completa de proteínas, aminoácidos e vitaminas.', 'https://www.maxtitanium.com.br')">
+                    <img src="uploads/logomax.png" alt="Max Titanium">
+                </button>
+            </div>
+            
+            <!-- Profile Section -->
+            <div class="section" id="profile">
+                <h2>Meu Perfil</h2>
+                <p>Gerencie suas informações pessoais e estatísticas.</p>
+                
+                <div class="card-container">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Informações Pessoais</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="name">Nome</label>
+                                <input type="text" id="name" value="João Silva">
+                            </div>
+                            <div class="form-group">
+                                <label for="age">Idade</label>
+                                <input type="number" id="age" value="28">
+                            </div>
+                            <div class="form-group">
+                                <label for="weight">Peso (kg)</label>
+                                <input type="number" id="weight" value="75">
+                            </div>
+                            <div class="form-group">
+                                <label for="height">Altura (cm)</label>
+                                <input type="number" id="height" value="175">
+                            </div>
+                            <button class="btn" id="save-profile">Salvar</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Estatísticas</h3>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>IMC:</strong> <span id="profile-imc">22.5</span></p>
+                            <p><strong>Classificação:</strong> <span id="profile-imc-class">Peso normal</span></p>
+                            <p><strong>Físico:</strong> <span id="profile-physique">Atlético</span></p>
+                            <div class="imc-indicator">
+                                <div class="imc-marker" style="left: 16.5%"><span class="imc-value">18.5</span></div>
+                                <div class="imc-marker" style="left: 50%"><span class="imc-value">25</span></div>
+                                <div class="imc-marker" style="left: 83.5%"><span class="imc-value">30</span></div>
+                                <div class="user-pointer" id="profile-imc-pointer" style="left: 45%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="site-title"></h2>
+            <p id="site-description"></p>
+            <a id="site-link" href="#" target="_blank">
+                <button>Ir para o site</button>
+            </a>
+        </div>
+    </div>
+   
+    <script>
+        // No início do script do painel, adicione:
+document.addEventListener('DOMContentLoaded', function() {
+    // Recupera o nome do usuário do localStorage
+    const userName = localStorage.getItem('userName') || 'Usuário';
+    
+    // Atualiza no cabeçalho
+    document.querySelector('.user-profile span').textContent = `Olá, ${userName}!`;
+
+    
+    // Atualiza no perfil
+    document.getElementById('name').value = userName;
+    
+    // Restante do seu código de inicialização do painel...
+    initializeDashboard();
+});
+        // Menu navigation
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Remove active class from all menu items
+                document.querySelectorAll('.menu-item').forEach(i => {
+                    i.classList.remove('active');
+                });
+                
+                // Add active class to clicked item
+                this.classList.add('active');
+                
+                // Hide all sections
+                document.querySelectorAll('.section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Show selected section
+                const sectionId = this.getAttribute('data-section');
+                document.getElementById(sectionId).classList.add('active');
+                
+                // Update header title
+                const headerTitle = document.querySelector('.header h1');
+                headerTitle.textContent = this.textContent.trim();
+            });
+        });
+        
+        // Exercise search functionality
+        document.getElementById('search-btn').addEventListener('click', function() {
+            const searchTerm = document.getElementById('exercise-search').value.toLowerCase();
+            const resultsContainer = document.getElementById('exercise-results');
+            
+            // Sample exercise data
+            const exercises = [
+                { name: "Supino Reto", category: "Peito", description: "Exercício para desenvolvimento do peitoral" },
+                { name: "Agachamento Livre", category: "Pernas", description: "Exercício completo para membros inferiores" },
+                { name: "Barra Fixa", category: "Costas", description: "Exercício para desenvolvimento das costas e bíceps" },
+                { name: "Rosca Direta", category: "Bíceps", description: "Exercício de isolamento para bíceps" },
+                { name: "Tríceps Corda", category: "Tríceps", description: "Exercício para desenvolvimento do tríceps" },
+                { name: "Impulsão", category: "Basquete", description: "Exercício para desenvolvimento da impulsão" },
+                { name: "Arremesso", category: "Basquete", description: "Exercício para desenvolvimento do arremesso" },
+                { name: "Manejo de Bola", category: "Basquete", description: "Exercício para desenvolvimento do manejo de bola" },
+                { name: "Drible(basquete)", category: "Basquete", description: "Exercício para desenvolvimento do drible" },
+                { name: "Passe(basquete)", category: "Basquete", description: "Exercício para desenvolvimento do passe" },
+                { name: "Rebote", category: "Basquete", description: "Exercício para desenvolvimento do rebote" },
+                { name: "Defesa", category: "Basquete", description: "Exercício para desenvolvimento da defesa" },
+                { name: "Saque", category: "Volei", description: "Exercício para desenvolvimento do saque" },
+                { name: "Recepção", category: "Volei", description: "Exercício para desenvolvimento do recepção" },
+                { name: "Levantamento", category: "Volei", description: "Exercício para desenvolvimento do levatamento" },
+                { name: "Ataque(voleibol)", category: "Volei", description: "Exercício para desenvolvimento do ataque" },
+                { name: "Bloqueio", category: "Volei", description: "Exercício para desenvolvimento do bloqueio" },
+                { name: "Chute", category: "Futebol", description: "Exercício para desenvolvimento do chute" },
+                { name: "Passe(futebol)", category: "Futebol", description: "Exercício para desenvolvimento do passe" },
+                { name: "Drible(futebol)", category: "Futebol", description: "Exercício para desenvolvimento do drible" },
+                { name: "Domínio", category: "Futebol", description: "Exercício para desenvolvimento do domínio" },
+                { name: "Desarme", category: "Futebol", description: "Exercício para desenvolvimento do desarme" },
+                { name: "Condução da Bola", category: "Futebol", description: "Exercício para desenvolvimento da condução de bola" },
+
+            ];
+            
+            // Filter exercises
+            const filteredExercises = exercises.filter(exercise => 
+                exercise.name.toLowerCase().includes(searchTerm) || 
+                exercise.category.toLowerCase().includes(searchTerm) ||
+                exercise.description.toLowerCase().includes(searchTerm)
+            );
+            
+            // Display results
+            resultsContainer.innerHTML = '';
+            
+            if (filteredExercises.length === 0) {
+                resultsContainer.innerHTML = '<p>Nenhum exercício encontrado.</p>';
+                return;
+            }
+            
+            filteredExercises.forEach(exercise => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <h3>${exercise.name}</h3>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Categoria:</strong> ${exercise.category}</p>
+                        <p>${exercise.description}</p>
+                    </div>
+                `;
+                resultsContainer.appendChild(card);
+            });
+        });
+        
+        // Profile save and IMC calculation
+        document.getElementById('save-profile').addEventListener('click', function() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value) / 100; // convert to meters
+            
+            // Calculate IMC
+            const imc = weight / (height * height);
+            const imcRounded = imc.toFixed(1);
+            
+            // Determine classification
+            let imcClass, physique;
+            if (imc < 18.5) {
+                imcClass = "Abaixo do peso";
+                physique = "Magro";
+            } else if (imc < 25) {
+                imcClass = "Peso normal";
+                physique = "Atlético";
+            } else if (imc < 30) {
+                imcClass = "Sobrepeso";
+                physique = "Forte";
+            } else {
+                imcClass = "Obesidade";
+                physique = "Robusto";
+            }
+            
+            // Update profile display
+            document.getElementById('profile-imc').textContent = imcRounded;
+            document.getElementById('profile-imc-class').textContent = imcClass;
+            document.getElementById('profile-physique').textContent = physique;
+            
+            // Update dashboard display
+            document.getElementById('current-imc').textContent = imcRounded;
+            document.getElementById('imc-class').textContent = imcClass;
+            
+            // Update IMC pointers
+            const imcPercentage = calculateImcPercentage(imc);
+            document.getElementById('user-imc-pointer').style.left = `${imcPercentage}%`;
+            document.getElementById('profile-imc-pointer').style.left = `${imcPercentage}%`;
+            
+            alert("Perfil atualizado com sucesso!");
+        });
+        
+        // Helper function to calculate IMC percentage for the indicator
+        function calculateImcPercentage(imc) {
+            // IMC scale from 15 to 40 for visualization purposes
+            const minImc = 15;
+            const maxImc = 40;
+            
+            // Cap the IMC value for display
+            const cappedImc = Math.min(Math.max(imc, minImc), maxImc);
+            
+            // Calculate percentage
+            return ((cappedImc - minImc) / (maxImc - minImc)) * 100;
+        }
+        
+        // Initialize IMC display
+        document.addEventListener('DOMContentLoaded', function() {
+            // Trigger a fake save to calculate initial IMC
+            document.getElementById('save-profile').click();
+        });
+
+          // Database of exercises with images and detailed information
+    const exercisesDatabase = [
+    {
+                id: 1,
+                name: "Supino Reto com Barra",
+                category: "peito",
+                image: "assets/supino_reto.gif",
+                description: "Exercício fundamental para desenvolvimento do peitoral maior, deltoides anterior e tríceps.",
+                instructions: "Deite-se no banco com os pés apoiados no chão. Segure a barra com as mãos um pouco além da largura dos ombros. Desça a barra até o peito e empurre para cima até estender os braços.",
+                sets: "3-4 séries de 8-12 repetições",
+                tips: "Mantenha as escápulas retraídas e não arqueie excessivamente as costas."
+            },
+            {
+                id: 2,
+                name: "Agachamento Livre",
+                category: "pernas",
+                image: "assets/agachamento_livre.gif",
+                description: "Exercício completo para quadríceps, glúteos e posterior de coxa, considerado o rei dos exercícios.",
+                instructions: "Posicione os pés na largura dos ombros. Desça flexionando os joelhos e quadril, mantendo o peito erguido. Desça até as coxas ficarem paralelas ao chão e retorne.",
+                sets: "4 séries de 6-10 repetições",
+                tips: "Mantenha o peso nos calcanhares e não deixe os joelhos passarem dos dedos dos pés."
+            },
+            {
+                id: 3,
+                name: "Barra Fixa",
+                category: "costas",
+                image: "assets/barra_fixa.gif",
+                description: "Excelente exercício para desenvolvimento das costas, especialmente o latíssimo do dorso.",
+                instructions: "Segure a barra com as mãos na largura dos ombros (pegada pronada). Puxe o corpo para cima até o queixo passar a barra. Desça controladamente.",
+                sets: "3-4 séries até a falha",
+                tips: "Mantenha o core ativado e evite balançar o corpo para ajudar no movimento."
+            },
+            {
+                id: 4,
+                name: "Rosca Direta com Barra",
+                category: "biceps",
+                image: "assets/rosca_direita.gif",
+                description: "Exercício clássico para isolamento do bíceps braquial.",
+                instructions: "Em pé, segure a barra com as mãos na largura dos ombros (pegada supinada). Flexione os cotovelos levando a barra até os ombros. Desça controladamente.",
+                sets: "3-4 séries de 10-12 repetições",
+                tips: "Mantenha os cotovelos fixos ao lado do corpo e evite usar impulso."
+            },
+            {
+                id: 5,
+                name: "Tríceps Corda",
+                category: "triceps",
+                image: "assets/triceps_corda.gif",
+                description: "Exercício eficiente para trabalhar as três porções do tríceps.",
+                instructions: "Segure a corda com as mãos na altura do peito. Empurre para baixo até estender completamente os braços. Volte controladamente.",
+                sets: "3 séries de 12-15 repetições",
+                tips: "Mantenha os cotovelos fixos e o corpo ereto, sem inclinar para frente."
+            },
+            {
+                id: 6,
+                name: "Desenvolvimento Militar",
+                category: "ombros",
+                image: "assets/desenvolvimento_militar.gif",
+                description: "Exercício fundamental para desenvolvimento dos deltoides (ombros).",
+                instructions: "Sentado ou em pé, segure a barra na altura dos ombros. Empurre para cima até estender os braços. Desça controladamente.",
+                sets: "3-4 séries de 8-10 repetições",
+                tips: "Mantenha o core ativado e não arqueie excessivamente as costas."
+            },
+            {
+                id: 7,
+                name: "Prancha Frontal",
+                category: "abdomen",
+                image: "assets/prancha.png",
+                description: "Exercício isométrico excelente para fortalecimento do core.",
+                instructions: "Apoie os antebraços no chão com os cotovelos alinhados aos ombros. Mantenha o corpo reto, apoiado nas pontas dos pés. Contraia o abdômen.",
+                sets: "3-4 séries de 30-60 segundos",
+                tips: "Não deixe o quadril cair ou subir demais. Mantenha a coluna neutra."
+            },
+            {
+                id: 8,
+                name: "Crucifixo com Halteres",
+                category: "peito",
+                image: "assets/Crucifixo_inclinado.gif",
+                description: "Exercício de isolamento para o peitoral, especialmente as porções esternais.",
+                instructions: "Deitado no banco, segure os halteres com os braços estendidos acima do peito. Abra os braços em um arco até os halteres ficarem na altura do peito. Retorne à posição inicial.",
+                sets: "3 séries de 12-15 repetições",
+                tips: "Mantenha uma leve flexão nos cotovelos e controle o movimento em toda amplitude."
+            },
+            {
+                id: 9,
+                name: "Remada Curvada",
+                category: "costas",
+                image: "assets/Remada_curvada.gif",
+                description: "Exercício excelente para desenvolvimento dos músculos das costas.",
+                instructions: "Com os pés na largura dos ombros e joelhos levemente flexionados, incline o tronco para frente. Puxe a barra em direção ao abdômen, mantendo os cotovelos próximos ao corpo.",
+                sets: "3-4 séries de 8-10 repetições",
+                tips: "Mantenha as costas retas e contraia as escápulas no topo do movimento."
+            },
+            {
+                id: 10,
+                name: "Leg Press 45°",
+                category: "pernas",
+                image: "assets/Press_45.gif",
+                description: "Exercício eficiente para quadríceps, glúteos e posterior de coxa.",
+                instructions: "Sente-se no aparelho com os pés na plataforma na largura dos ombros. Empurre a plataforma até quase estender as pernas. Desça controladamente.",
+                sets: "3-4 séries de 10-12 repetições",
+                tips: "Não trave os joelhos no topo do movimento e mantenha os pés alinhados com os joelhos."
+            },
+            // Basquete
+{
+    id: 11,
+    name: "Exercícios de Impulsão",
+    category: "basquete",
+    image: "assets/impulsao.gif",
+    description: "Treinos focados no salto vertical e potência nas pernas.",
+    instructions: "Realize saltos pliométricos, agachamentos com salto e saltos contínuos para desenvolver explosão.",
+    sets: "3-4 séries de 12-15 repetições",
+    tips: "Mantenha a postura correta e foque em saltos rápidos e explosivos."
+},
+{
+    id: 12,
+    name: "Arremesso",
+    category: "basquete",
+    image: "assets/arremesso.gif",
+    description: "Movimento essencial para pontuar no basquete.",
+    instructions: "Posicione-se, flexione os joelhos e faça o movimento contínuo do braço até o lançamento.",
+    sets: "4 séries de 15-20 arremessos",
+    tips: "Concentre-se no arco da bola e finalize com o punho direcionado para o aro."
+},
+{
+    id: 13,
+    name: "Manejo de Bola",
+    category: "basquete",
+    image: "assets/manejo.gif",
+    description: "Trabalho de controle de bola com as duas mãos.",
+    instructions: "Realize dribles estacionários alternando a mão e a altura da bola.",
+    sets: "5 minutos de prática contínua",
+    tips: "Mantenha o olhar para frente e não para a bola."
+},
+{
+    id: 14,
+    name: "Drible",
+    category: "basquete",
+    image: "assets/drible.gif",
+    description: "Habilidade para avançar e criar jogadas.",
+    instructions: "Alterne a bola entre as mãos enquanto se desloca pela quadra.",
+    sets: "5-10 repetições em velocidade pela quadra",
+    tips: "Use o corpo para proteger a bola do adversário."
+},
+{
+    id: 15,
+    name: "Passe",
+    category: "basquete",
+    image: "assets/passe.gif",
+    description: "Fundamento essencial para movimentação da equipe.",
+    instructions: "Execute passes de peito, picados e por cima da cabeça em duplas.",
+    sets: "3 séries de 10 passes de cada tipo",
+    tips: "Use a força dos braços e do tronco, não apenas das mãos."
+},
+{
+    id: 16,
+    name: "Rebote",
+    category: "basquete",
+    image: "assets/rebote.gif",
+    description: "Ação de recuperar a bola após arremessos errados.",
+    instructions: "Posicione-se, faça box-out e salte para pegar a bola no ponto mais alto.",
+    sets: "4 séries de 8-10 rebotes simulados",
+    tips: "Use o corpo para ganhar espaço e mantenha os braços firmes."
+},
+{
+    id: 17,
+    name: "Defesa",
+    category: "basquete",
+    image: "assets/defesa.gif",
+    description: "Posicionamento e movimentação defensiva.",
+    instructions: "Mantenha-se baixo, braços abertos e deslize lateralmente acompanhando o adversário.",
+    sets: "5 repetições de 30 segundos",
+    tips: "Nunca cruze as pernas e mantenha-se atento ao quadril do oponente."
+},
+
+// Vôlei
+{
+    id: 18,
+    name: "Saque",
+    category: "volei",
+    image: "assets/saque.gif",
+    description: "Ação inicial da jogada no vôlei.",
+    instructions: "Segure a bola com uma mão, lance-a levemente e golpeie com a outra.",
+    sets: "4 séries de 10 saques",
+    tips: "Varie entre saque flutuante e viagem para treinar diferentes estilos."
+},
+{
+    id: 19,
+    name: "Recepção",
+    category: "volei",
+    image: "assets/recepcao.gif",
+    description: "Fundamento para controlar a bola após o saque adversário.",
+    instructions: "Una os braços, dobre levemente os joelhos e direcione a bola ao levantador.",
+    sets: "4 séries de 15 recepções",
+    tips: "Mantenha a base firme e os braços firmes para precisão."
+},
+{
+    id: 20,
+    name: "Levantamento",
+    category: "volei",
+    image: "assets/levantamento.gif",
+    description: "Movimento para preparar a bola para o ataque.",
+    instructions: "Posicione as mãos acima da testa e empurre a bola com a ponta dos dedos.",
+    sets: "3-4 séries de 12 repetições",
+    tips: "Use as pernas para ajudar no movimento e mantenha os cotovelos abertos."
+},
+{
+    id: 21,
+    name: "Ataque",
+    category: "volei",
+    image: "assets/ataque.gif",
+    description: "Finalização ofensiva da jogada.",
+    instructions: "Corra, salte e golpeie a bola com força em direção à quadra adversária.",
+    sets: "4 séries de 10 ataques",
+    tips: "Coordene corrida, salto e braço para máxima potência."
+},
+{
+    id: 22,
+    name: "Bloqueio",
+    category: "volei",
+    image: "assets/bloqueio.gif",
+    description: "Movimento defensivo contra o ataque adversário.",
+    instructions: "Salte próximo à rede com os braços estendidos para interceptar a bola.",
+    sets: "4 séries de 8 bloqueios",
+    tips: "Feche bem os espaços e mantenha os braços firmes."
+},
+
+// Futebol
+{
+    id: 23,
+    name: "Chute",
+    category: "futebol",
+    image: "assets/chute.gif",
+    description: "Movimento principal para finalizar jogadas.",
+    instructions: "Apoie o pé de base ao lado da bola e chute com a parte do pé desejada.",
+    sets: "4 séries de 8-12 chutes",
+    tips: "Mantenha o corpo levemente inclinado sobre a bola para evitar chutes altos."
+},
+{
+    id: 24,
+    name: "Passe",
+    category: "futebol",
+    image: "assets/passe.gif",
+    description: "Movimento essencial para a troca de bola entre jogadores.",
+    instructions: "Use o lado interno do pé para maior precisão nos passes.",
+    sets: "3 séries de 10 passes em duplas",
+    tips: "Olhe antes para o companheiro e ajuste a força do passe."
+},
+{
+    id: 25,
+    name: "Drible",
+    category: "futebol",
+    image: "assets/drible_futebol.gif",
+    description: "Habilidade para enganar o adversário e avançar.",
+    instructions: "Use mudanças de direção rápidas e controle de bola próximo ao pé.",
+    sets: "5 minutos de prática contínua",
+    tips: "Mantenha o olhar para frente e o corpo inclinado levemente."
+},
+{
+    id: 26,
+    name: "Domínio",
+    category: "futebol",
+    image: "assets/dominio.gif",
+    description: "Controle da bola após recebê-la.",
+    instructions: "Use diferentes partes do corpo (pé, coxa, peito) para amortecer a bola.",
+    sets: "3 séries de 12 domínios",
+    tips: "Mantenha a bola próxima ao corpo para mais controle."
+},
+{
+    id: 27,
+    name: "Desarme",
+    category: "futebol",
+    image: "assets/desarme.gif",
+    description: "Ação defensiva para recuperar a posse da bola.",
+    instructions: "Aproxime-se do adversário e use o pé para interceptar a bola sem cometer falta.",
+    sets: "4 séries de 8 desarmes simulados",
+    tips: "Mantenha a postura baixa e espere o momento certo."
+},
+{
+    id: 28,
+    name: "Condução de Bola",
+    category: "futebol",
+    image: "assets/conducao.gif",
+    description: "Movimento de levar a bola pelo campo com controle.",
+    instructions: "Use toques curtos e alternados nos dois pés enquanto avança.",
+    sets: "5 minutos de prática contínua",
+    tips: "Mantenha a bola próxima ao corpo e varie a velocidade."
+}
+
+    ];
+
+    // Exercise search functionality
+    document.getElementById('search-btn').addEventListener('click', function() {
+        searchExercises();
+    });
+
+    // Also search when pressing Enter in search field
+    document.getElementById('exercise-search').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchExercises();
+        }
+    });
+
+    // Filter exercises by category
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Remove active class from all filter buttons
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                b.classList.remove('active');
+            });
+            
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            const category = this.getAttribute('data-category');
+            if (category === 'all') {
+                displayExercises(exercisesDatabase);
+            } else {
+                const filteredExercises = exercisesDatabase.filter(ex => ex.category === category);
+                displayExercises(filteredExercises);
+            }
+        });
+    });
+
+    // Function to search exercises
+    function searchExercises() {
+        const searchTerm = document.getElementById('exercise-search').value.toLowerCase();
+        const resultsContainer = document.getElementById('exercise-results');
+        
+        if (searchTerm.trim() === '') {
+            displayExercises(exercisesDatabase);
+            return;
+        }
+        
+        // Filter exercises
+        const filteredExercises = exercisesDatabase.filter(exercise => 
+            exercise.name.toLowerCase().includes(searchTerm) || 
+            exercise.description.toLowerCase().includes(searchTerm) ||
+            exercise.instructions.toLowerCase().includes(searchTerm)
+        );
+        
+        // Display results
+        displayExercises(filteredExercises);
+    }
+
+    // Function to display exercises
+    function displayExercises(exercises) {
+        const resultsContainer = document.getElementById('exercise-results');
+        resultsContainer.innerHTML = '';
+        
+        if (exercises.length === 0) {
+            resultsContainer.innerHTML = `
+                <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 30px;">
+                    <h3>Nenhum exercício encontrado</h3>
+                    <p>Tente usar termos diferentes ou verifique a ortografia.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        exercises.forEach(exercise => {
+            const card = document.createElement('div');
+            card.className = 'card exercise-card';
+            card.innerHTML = `
+                <img src="${exercise.image}" alt="${exercise.name}" class="exercise-image">
+                <div class="exercise-info">
+                    <span class="exercise-category">${getCategoryName(exercise.category)}</span>
+                    <h3 class="exercise-title">${exercise.name}</h3>
+                    <p class="exercise-description">${exercise.description}</p>
+                    <div class="exercise-details">
+                        <span>${exercise.sets}</span>
+                        <button class="btn" onclick="showExerciseDetails(${exercise.id})">Detalhes</button>
+                    </div>
+                </div>
+            `;
+            resultsContainer.appendChild(card);
+        });
+    }
+
+    // Function to show full exercise details
+    function showExerciseDetails(exerciseId) {
+        const exercise = exercisesDatabase.find(ex => ex.id === exerciseId);
+        if (!exercise) return;
+        
+        const resultsContainer = document.getElementById('exercise-results');
+        resultsContainer.innerHTML = '';
+        
+        const detailCard = document.createElement('div');
+        detailCard.className = 'card';
+        detailCard.style.gridColumn = '1 / -1';
+        detailCard.innerHTML = `
+            <div class="card-header" style="background-color: #3498db;">
+                <h3>${exercise.name}</h3>
+            </div>
+            <div class="card-body" style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+                <div>
+                    <img src="${exercise.image}" alt="${exercise.name}" style="width: 100%; border-radius: 8px;">
+                    <div style="margin-top: 15px;">
+                        <p><strong>Categoria:</strong> ${getCategoryName(exercise.category)}</p>
+                        <p><strong>Séries:</strong> ${exercise.sets}</p>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 10px;">Instruções de Execução:</h4>
+                    <p style="margin-bottom: 15px;">${exercise.instructions}</p>
+                    
+                    <h4 style="margin-bottom: 10px;">Dicas Técnicas:</h4>
+                    <p style="margin-bottom: 15px;">${exercise.tips}</p>
+                    
+                    <button class="btn" onclick="displayExercises(exercisesDatabase)" style="margin-top: 20px;">
+                        Voltar para todos os exercícios
+                    </button>
+                </div>
+            </div>
+        `;
+        resultsContainer.appendChild(detailCard);
+    }
+    function openModal(title, description, link) {
+  document.getElementById('site-title').textContent = title;
+  document.getElementById('site-description').textContent = description;
+  document.getElementById('site-link').href = link;
+  document.getElementById('modal').style.display = 'block';
+}
+function closeModal() {
+  document.getElementById('modal').style.display = 'none';
+}
+
+    // Helper function to get category name
+    function getCategoryName(category) {
+        const categories = {
+            'peito': 'Peito',
+            'costas': 'Costas',
+            'pernas': 'Pernas',
+            'biceps': 'Bíceps',
+            'triceps': 'Tríceps',
+            'ombros': 'Ombros',
+            'abdomen': 'Abdômen',
+            'futebol': 'Futebol',
+            'basquete': 'Basquete',
+            'volei': 'Volei',
+
+            
+        };
+        return categories[category] || category;
+    }
+
+    // Initialize exercises when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        displayExercises(exercisesDatabase);
+    });
+    </script>
+</body>
+</html>
